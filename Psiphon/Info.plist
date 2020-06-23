@@ -19,7 +19,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>163</string>
+	<string>164</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-1072041961750291~2085686375</string>
+	<key>GADDelayAppMeasurementInit</key>
+	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
