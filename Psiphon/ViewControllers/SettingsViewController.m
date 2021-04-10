@@ -35,11 +35,13 @@ NSString * const SettingsPsiCashCellSpecifierKey = @"settingsPsiCash";
 NSString * const SettingsSubscriptionCellSpecifierKey = @"settingsSubscription";
 NSString * const SettingsReinstallVPNConfigurationKey = @"settingsReinstallVPNConfiguration";
 NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConsent";
+NSString * const SettingsPsiCashAccountLogoutCellSpecifierKey = @"settingsLogOutPsiCashAccount";
 
 @interface SettingsViewController ()
-
-@property (assign) BOOL hasActiveSubscription;
-@property (assign) VPNStatus vpnStatus;
+ 
+@property (nonatomic) BOOL hasActiveSubscription;
+@property (nonatomic) VPNStatus vpnStatus;
+@property (nonatomic) BOOL isPsiCashAccountLoggedIn;
 
 @property (nonatomic) RACCompoundDisposable *compoundDisposable;
 
@@ -49,6 +51,7 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
     UITableViewCell *subscriptionTableViewCell;
     UITableViewCell *reinstallVPNProfileCell;
     UITableViewCell *resetConsentCell;
+    UITableViewCell *psiCashAccountLogOutCell;
 }
 
 - (instancetype)init {
@@ -90,7 +93,7 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
 
     [self.compoundDisposable addDisposable:subscriptionStatusDisposable];
 
-    __block RACDisposable *tunnelStatusDisposable =
+    RACDisposable *tunnelStatusDisposable =
       [AppObservables.shared.vpnStatus
         subscribeNext:^(NSNumber *statusObject) {
           SettingsViewController *__strong strongSelf = weakSelf;
@@ -102,6 +105,16 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
         }];
 
     [self.compoundDisposable addDisposable:tunnelStatusDisposable];
+    
+    [self.compoundDisposable addDisposable:
+     [AppObservables.shared.isLoggedInToPsiCashAccount
+      subscribeNext:^(NSNumber * _Nullable isLoggedIn) {
+        SettingsViewController *__strong strongSelf = weakSelf;
+        if (strongSelf) {
+            strongSelf.isPsiCashAccountLoggedIn = [isLoggedIn boolValue];
+            [strongSelf updateHiddenKeys];
+        }
+    }]];
 }
 
 - (void)updateHiddenKeys {
@@ -114,6 +127,12 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
     } else {
         [hiddenKeys addObject:kForceReconnect];
         [hiddenKeys addObject:kForceReconnectFooter];
+    }
+    
+    if (self.isPsiCashAccountLoggedIn == TRUE) {
+        [hiddenKeys removeObject:SettingsPsiCashAccountLogoutCellSpecifierKey];
+    } else {
+        [hiddenKeys addObject:SettingsPsiCashAccountLogoutCellSpecifierKey];
     }
 
     self.hiddenKeys = hiddenKeys;
@@ -161,6 +180,11 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
         [self onResetConsent];
         NSIndexPath *path = [tableView indexPathForCell:resetConsentCell];
         [tableView deselectRowAtIndexPath:path animated:TRUE];
+        
+    } else if ([specifier.key isEqualToString:SettingsPsiCashAccountLogoutCellSpecifierKey]) {
+        [self onPsiCashAccountLogOut];
+        NSIndexPath *path = [tableView indexPathForCell:psiCashAccountLogOutCell];
+        [tableView deselectRowAtIndexPath:path animated:TRUE];
     }
 }
 
@@ -171,7 +195,8 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
       SettingsPsiCashCellSpecifierKey,
       SettingsSubscriptionCellSpecifierKey,
       SettingsReinstallVPNConfigurationKey,
-      SettingsResetAdConsentCellSpecifierKey
+      SettingsResetAdConsentCellSpecifierKey,
+      SettingsPsiCashAccountLogoutCellSpecifierKey
     ];
 
     if (![customKeys containsObject:specifier.key]) {
@@ -202,13 +227,15 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
         cell = [super tableView:tableView cellForSpecifier:specifier];
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
         cell.textLabel.textColor = self.view.tintColor;
-        cell.textLabel.text = NSLocalizedStringWithDefaultValue(@"SETTINGS_RESET_ADMOB_CONSENT",
-          nil,
-          [NSBundle mainBundle],
-          @"Reset AdMob Consent",
-          @"(Do not translate 'AdMob') Title of cell in settings menu which indicates the user can change or revoke the consent they've given to admob");
-
+        cell.textLabel.text = [UserStrings Reset_admob_consent];
         resetConsentCell = cell;
+        
+    } else if ([specifier.key isEqualToString:SettingsPsiCashAccountLogoutCellSpecifierKey]) {
+        cell = [super tableView:tableView cellForSpecifier:specifier];
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        cell.textLabel.textColor = UIColor.peachyPink;
+        cell.textLabel.text = [UserStrings Logout_of_psicash_account];
+        psiCashAccountLogOutCell = cell;
     }
 
     PSIAssert(cell != nil);
@@ -218,9 +245,7 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
 #pragma mark - Callbacks
 
 - (void)openPsiCashViewController {
-    UIViewController *psiCashViewController = [SwiftDelegate.bridge
-                                               makePsiCashViewController:PsiCashViewControllerTabsAddPsiCash];
-    [self presentViewController:psiCashViewController animated:YES completion:nil];
+    [SwiftDelegate.bridge presentPsiCashViewController:PsiCashScreenTabAddPsiCash];
 }
 
 - (void)openIAPViewController {
@@ -230,7 +255,7 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
 }
 
 - (void)onResetConsent {
-    UIAlertController *options = [UIAlertController alertControllerWithTitle:nil
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
                                                                      message:nil
                                                   preferredStyle:UIAlertControllerStyleActionSheet];
 
@@ -240,9 +265,38 @@ NSString * const SettingsResetAdConsentCellSpecifierKey = @"settingsResetAdConse
           [SwiftDelegate.bridge resetAdConsent];
       }];
 
-    [options addAction:resetAction];
-    [options addCancelAction:nil];
-    [options presentFromTopController];
+    [alert addAction:resetAction];
+    [alert addCancelAction:nil];
+
+    [[alert popoverPresentationController] setSourceView:resetConsentCell];
+    [[alert popoverPresentationController] setSourceRect:CGRectMake(0,0,1,1)];
+    [[alert popoverPresentationController]
+     setPermittedArrowDirections:UIPopoverArrowDirectionDown];
+
+    [alert presentFromTopController];
+}
+
+- (void)onPsiCashAccountLogOut {
+    UIAlertController *alert = [UIAlertController
+                                alertControllerWithTitle:[UserStrings Log_out]
+                                message:[UserStrings Are_you_sure_psicash_account_logout]
+                                preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *logoutAction = [UIAlertAction actionWithTitle:[UserStrings Log_out]
+                                                           style:UIAlertActionStyleDestructive
+                                                         handler:^(UIAlertAction *action) {
+        [SwiftDelegate.bridge logOutPsiCashAccount];
+    }];
+    
+    [alert addAction:logoutAction];
+    [alert addCancelAction:nil];
+
+    [[alert popoverPresentationController] setSourceView:psiCashAccountLogOutCell];
+    [[alert popoverPresentationController] setSourceRect:CGRectMake(0,0,1,1)];
+    [[alert popoverPresentationController]
+     setPermittedArrowDirections:UIPopoverArrowDirectionDown];
+
+    [alert presentFromTopController];
 }
 
 @end

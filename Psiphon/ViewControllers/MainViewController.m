@@ -24,7 +24,6 @@
 #import "Asserts.h"
 #import "AvailableServerRegions.h"
 #import "DispatchUtils.h"
-#import "IAPViewController.h"
 #import "Logging.h"
 #import "DebugViewController.h"
 #import "PsiphonConfigUserDefaults.h"
@@ -275,7 +274,7 @@ NSTimeInterval const MaxAdLoadingTime = 10.f;
                                 subscribeNext:^(BridgedBalanceViewBindingType * _Nullable balance) {
             MainViewController *__strong strongSelf = weakSelf;
             if (strongSelf) {
-                [strongSelf->psiCashWidget.balanceView objcBind:balance];
+                [strongSelf->psiCashWidget.balanceViewWrapper objcBind:balance];
             }
         }]];
     }
@@ -786,18 +785,12 @@ NSTimeInterval const MaxAdLoadingTime = 10.f;
 
 #pragma mark - PsiCash UI
 
-- (void)presentPsiCashViewController:(PsiCashViewControllerTabs)tab {
-    UIViewController *psiCashViewController = [SwiftDelegate.bridge
-                                               makePsiCashViewController:tab];
-    [self presentViewController:psiCashViewController animated:YES completion:nil];
-}
-
 - (void)addPsiCashButtonTapped {
-    [self presentPsiCashViewController:PsiCashViewControllerTabsAddPsiCash];
+    [SwiftDelegate.bridge presentPsiCashViewController:PsiCashScreenTabAddPsiCash];
 }
 
 - (void)speedBoostButtonTapped {
-    [self presentPsiCashViewController:PsiCashViewControllerTabsSpeedBoost];
+    [SwiftDelegate.bridge presentPsiCashViewController:PsiCashScreenTabSpeedBoost];
 }
 
 - (void)setupPsiphonLogoView {
@@ -878,7 +871,7 @@ NSTimeInterval const MaxAdLoadingTime = 10.f;
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc]
                                              initWithTarget:self
                                              action:@selector(addPsiCashButtonTapped)];
-    [psiCashWidget.balanceView addGestureRecognizer:tapRecognizer];
+    [psiCashWidget.balanceViewWrapper.view addGestureRecognizer:tapRecognizer];
 }
 
 - (void)setPsiCashContentHidden:(BOOL)hidden {

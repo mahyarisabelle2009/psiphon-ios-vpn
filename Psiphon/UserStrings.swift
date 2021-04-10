@@ -160,9 +160,9 @@ import Foundation
                                  comment: "'PsiCash' features are unavailable while the app the is disconnecting from 'Psiphon'. PsiCash is a type of credit. Do not translate or transliterate 'Psiphon'. Do not translate or transliterate 'PsiCash'")
     }
     
-    static func PsiCash_purchase_notice() -> String {
-        return NSLocalizedString("PSICASH_PURCHASE_SCREEN_NOTICE", tableName: nil, bundle: Bundle.main,
-                                 value: "IMPORTANT: Your PsiCash will not be preserved if you uninstall Psiphon.",
+    static func PsiCash_non_account_purchase_notice() -> String {
+        return NSLocalizedString("PSICASH_NON_ACCOUNT_SCREEN_NOTICE", tableName: nil, bundle: Bundle.main,
+                                 value: "IMPORTANT: Your PsiCash will not be preserved if you uninstall Psiphon, unless you have created a PsiCash account and are logged into your PsiCash account.",
                                  comment: "PsiCash in-app purchase disclaimer that appears on the bottom of the screen where users can buy different amounts of PsiCash from the PlayStore.  Do not translate or transliterate terms PsiCash")
     }
 
@@ -170,6 +170,18 @@ import Foundation
         return NSLocalizedString("CONNECT_TO_PSIPHON", tableName: nil, bundle: Bundle.main,
                                  value: "Connect to Psiphon",
                                  comment: "Button title that lets the user to connect to the Psiphon network. Do not translate or transliterate 'Psiphon'")
+    }
+
+    static func Psiphon_connection_required() -> String {
+        return NSLocalizedString("PSIPHON_CONNECTION_REQUIRED", tableName: nil, bundle: Bundle.main,
+                                 value: "Psiphon Connection Required",
+                                 comment: "Alert message informing user that a Psip")
+    }
+
+    static func In_order_to_use_PsiCash_you_must_be_connected() -> String {
+        return NSLocalizedString("PSICASH_MUST_BE_CONNECTED", tableName: nil, bundle: Bundle.main,
+                                 value: "In order to use PsiCash, you must be connected to the Psiphon network.",
+                                 comment: "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated.")
     }
 
     static func Psiphon_is_not_connected() -> String {
@@ -244,13 +256,94 @@ import Foundation
                                  value: "SELECT LANGUAGE",
                                  comment: "Title for screen that allows user to select language. Use all capital letters in the translation only if it makes sense.")
     }
+
+    @objc static func Reset_admob_consent() -> String {
+        return NSLocalizedString("SETTINGS_RESET_ADMOB_CONSENT", tableName: nil, bundle: Bundle.main,
+                                 value: "Reset AdMob Consent",
+                                 comment: "(Do not translate 'AdMob') Title of cell in settings menu which indicates the user can change or revoke the consent they've given to admob")
+    }
     
+    @objc static func Logout_of_psicash_account() -> String {
+        return NSLocalizedString("LOG_OUT_PSICASH_ACCOUNT", tableName: nil, bundle: Bundle.main,
+                                 value: "Log out of PsiCash account",
+                                 comment: "Do not translate or transliterate 'PsiCash'. Settings menu logout button that lets users log out of their PsiCash account.")
+    }
+    
+    @objc static func Are_you_sure_psicash_account_logout() -> String {
+        return NSLocalizedString("PSICASH_ACCOUNT_LOGOUT_CHECK_PROMPT", tableName: nil, bundle: Bundle.main,
+                                 value: "Are you sure you want to log out of your PsiCash account?",
+                                 comment: "Do not translate or transliterate 'PsiCash'. Alert message asking user if they are sure they would like to logout of their PsiCash account")
+    }
+    
+    @objc static func Log_out() -> String {
+        return NSLocalizedString("LOG_OUT_BUTTON_TITLE", tableName: nil, bundle: Bundle.main,
+                                 value: "Log Out",
+                                 comment: "Title of the button that lets users log out of their account")
+    }
+    
+    static func Sign_up_or_log_in() -> String {
+        return NSLocalizedString("SIGN_UP_OR_LOG_IN", tableName: nil, bundle: Bundle.main,
+                                 value: "Sign Up or Log In",
+                                 comment: "Message title informing the user that they must sign up for an account or log in to their account")
+    }
+    
+    static func Sign_up_or_login_to_psicash_account_to_continue() -> String {
+        return NSLocalizedString("SIGN_UP_LOG_IN_TO_PSICASH_ACCOUNT_TO_CONTINUE", tableName: nil, bundle: Bundle.main,
+                                 value: "Sign Up or Log In to your PsiCash account to continue",
+                                 comment: "Do not translate or transliterate 'PsiCash'. Informs the user that they must sign up for a PsiCash account or log in to their PsiCash account in order to user PsiCash features.")
+    }
+    
+    static func Psicash_account() -> String {
+        return NSLocalizedString("PSICASH_ACCOUNT", tableName: nil, bundle: Bundle.main,
+                                 value: "PsiCash Account",
+                                 comment: "Do not translate or transliterate 'PsiCash'. Header of a box providing context that the actions inside the box are related to PsiCash accounts.")
+    }
+    
+    static func Psicash_accounts_last_merge_warning() -> String {
+        return NSLocalizedString("PSICASH_ACCOUNTS_LAST_MERGE_WARNING", tableName: nil, bundle: Bundle.main,
+                                 value: "Note that this will be the last time that you can merge your PsiCash account.",
+                                 comment: "Do not translate or transliterate 'PsiCash'.")
+    }
+    
+    static func Incorrect_username_or_password() -> String {
+        return NSLocalizedString("INCORRECT_USERNAME_OR_PASSWORD", tableName: nil, bundle: Bundle.main,
+                                 value: "The username or password you entered is incorrect. Please try again.",
+                                 comment: "Error message when username or password entered by the user to login into their account is incorrect.")
+    }
+    
+    static func Psicash_logged_in_successfully() -> String {
+        return NSLocalizedString("PSICASH_LOGGED_IN_SUCCESSFULLY", tableName: nil, bundle: Bundle.main,
+                                 value: "You successfully logged into your PsiCash account.",
+                                 comment: "Do not translate or transliterate 'PsiCash'. Alert message when the user has been able to successfully log into their PsiCash account.")
+    }
+    
+    static func Psicash_logged_out_successfully() -> String {
+        return NSLocalizedString("PSICASH_LOGGED_OUT_SUCCESSFULLY", tableName: nil, bundle: Bundle.main,
+                                 value: "You successfully logged out of your PsiCash account.",
+                                 comment: "Do not translate or transliterate 'PsiCash'. Alert message when the user has been able to successfully log out of their PsiCash account.")
+    }
+
+    static func Encourage_psicash_account_creation() -> String {
+        // TODO: Localize
+        return "We strongly encourage you to make a PsiCash account. Having an account allows you to share your balance between devices and protect your purchases."
+    }
+
+    static func Continue_without_an_account() -> String {
+        // TODO: Localize
+        return "Continue without an account"
+    }
+
+    static func Create_account() -> String {
+        // TODO: Localize
+        return "Create account"
+    }
+
     static func Loading() -> String {
         return NSLocalizedString("LOADING", tableName: nil, bundle: Bundle.main,
                                  value: "Loading...",
                                  comment: "Text displayed while app loads")
     }
-    
+
 }
 
 // MARK: Internet reachability
@@ -286,7 +379,7 @@ extension UserStrings {
 
 // MARK: General Strings
 extension UserStrings {
-    @objc static func Operation_failed_alert_message() -> String {
+    @objc static func Operation_failed_please_try_again_alert_message() -> String {
         return NSLocalizedString("ALERT_BODY_OPERATION_FAILED", tableName: nil, bundle: Bundle.main,
                                  value: "Operation failed, please try again.",
                                  comment: "Alert dialog body when requested operation by the user failed.")
@@ -303,6 +396,55 @@ extension UserStrings {
                                  value: "Purchase Failed",
                                  comment: "Generic alert shown when purchase of a product fails.")
     }
+    
+    static func Create_your_PsiCash_account() -> String {
+        return NSLocalizedString("CREATE_PSICASH_YOUR_ACCOUNT", tableName: nil, bundle: Bundle.main,
+                                 value: "Create your PsiCash account",
+                                 comment: "Title label next to a button that lets users create a PsiCash account. Do not translate or transliterate 'PsiCash'")
+    }
+    
+    static func Create_new_account_button_title() -> String {
+        return NSLocalizedString("CREATE_NEW_ACCOUNT_BUTTON_TITLE", tableName: nil, bundle: Bundle.main,
+                                 value: "Create New Account",
+                                 comment: "Button label that lets users create a new account.")
+    }
+    
+    static func Sign_up() -> String {
+        return NSLocalizedString("SIGN_UP_BUTTON_TITLE", tableName: nil, bundle: Bundle.main,
+                                 value: "Sign Up",
+                                 comment: "Title on a button that lets users sign up for an account")
+    }
+    
+    static func Log_in() -> String {
+        return NSLocalizedString("LOG_IN_BUTTON_TITLE", tableName: nil, bundle: Bundle.main,
+                                 value: "Log In",
+                                 comment: "Title on a button that lets users login to their account with the username and password they have entered.")
+    }
+    
+    static func Username() -> String {
+        return NSLocalizedString("USERNAME_TEXT_FIELD", tableName: nil, bundle: Bundle.main,
+                                 value: "Username",
+                                 comment: "Text field label where users can enter their account's username")
+    }
+    
+    static func Password() -> String {
+        return NSLocalizedString("PASSWORD_TEXT_FIELD", tableName: nil, bundle: Bundle.main,
+                                 value: "Password",
+                                 comment: "Text field label where users can enter their account's password")
+    }
+    
+    static func Forgot_password_button_title() -> String {
+        return NSLocalizedString("FORGOT_PASSWORD", tableName: nil, bundle: Bundle.main,
+                                 value: "Forgot Password?",
+                                 comment: "Button title that lets users reset their password if they forgot their account's password.")
+    }
+    
+    static func Or() -> String {
+        return NSLocalizedString("OR_SIGNUP_SIGNIN", tableName: nil, bundle: Bundle.main,
+                                 value: "OR",
+                                 comment: "Capitalize where it makes sense. Label visually separating Sign up section and sign in section of the app.")
+    }
+    
 }
 
 // MARK: Generic values

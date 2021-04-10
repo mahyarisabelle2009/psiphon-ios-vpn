@@ -84,3 +84,9 @@ public struct PsiphonDeepLinking {
     public static let speedBoostDeepLink = psiCashDeepLinkBaseURL.appendingPathComponent("speedboost")
 
 }
+
+public struct PsiCashClientHardCodedValues {
+    
+    public static let userAgent = "Psiphon-PsiCash-iOS"
+    
+}

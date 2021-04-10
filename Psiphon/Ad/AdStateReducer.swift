@@ -135,12 +135,13 @@ typealias AdStateEnvironment = (
     adMobRewardedVideoAdController: AdMobRewardedVideoAdController,
     adLoadCondition: () -> ErrorMessage?,
     // TODO: Direct access to UI. This should be wrapped in an effect.
-    topMostViewController: () -> UIViewController
+    getTopPresentedViewController: () -> UIViewController
 )
 
-func adStateReducer(
-    state: inout AdReducerState, action: AdAction, environment: AdStateEnvironment
-) -> [Effect<AdAction>] {
+let adStateReducer = Reducer<AdReducerState
+                             , AdAction
+                             , AdStateEnvironment> {
+    state, action, environment in
     
     switch action {
     
@@ -165,7 +166,7 @@ func adStateReducer(
             collectATTConsentAndInitAdMobSDK(
                 tunnelStatusSignal: environment.tunnelStatusSignal,
                 adConsent: environment.adConsent,
-                topMostViewController: environment.topMostViewController
+                topMostViewController: environment.getTopPresentedViewController
             )
             .mapBothAsResult {
                 ._collectConsentAndInitAdSdkResult($0)
@@ -234,7 +235,7 @@ func adStateReducer(
                 collectATTConsentAndInitAdMobSDK(
                     tunnelStatusSignal: environment.tunnelStatusSignal,
                     adConsent: environment.adConsent,
-                    topMostViewController: environment.topMostViewController
+                    topMostViewController: environment.getTopPresentedViewController
                 )
                 .mapBothAsResult(id)
                 .flatMap(.latest, { consentResult in
@@ -333,7 +334,7 @@ func adStateReducer(
             
             Effect.deferred {
                 let maybeError = environment.adMobInterstitialAdController.present(
-                    fromRootViewController: environment.topMostViewController()
+                    fromRootViewController: environment.getTopPresentedViewController()
                 )
                 return AdAction._presentInterstitialResult(maybeError)
             }
@@ -397,7 +398,7 @@ func adStateReducer(
                 collectATTConsentAndInitAdMobSDK(
                     tunnelStatusSignal: environment.tunnelStatusSignal,
                     adConsent: environment.adConsent,
-                    topMostViewController: environment.topMostViewController
+                    topMostViewController: environment.getTopPresentedViewController
                 )
                 .mapBothAsResult(id)
                 .flatMap(.latest, { consentResult in
@@ -498,7 +499,7 @@ func adStateReducer(
             
             Effect.deferred {
                 let maybeError = environment.adMobRewardedVideoAdController.present(
-                    fromRootViewController: environment.topMostViewController()
+                    fromRootViewController: environment.getTopPresentedViewController()
                 )
                 return AdAction._presentRewardedVideoResult(maybeError)
             }

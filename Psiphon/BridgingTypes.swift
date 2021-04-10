@@ -51,6 +51,8 @@ import PsiCashClient
     @objc func onVPNStateSyncError(_ userErrorMessage: String)
     
     @objc func onReachabilityStatusDidChange(_ previousStats: ReachabilityStatus)
+    
+    @objc func onPsiCashAccountStatusDidChange(_ isLoggedIn: Bool)
 
     @objc func dismiss(screen: DismissibleScreen, completion: (() -> Void)?)
     
@@ -79,16 +81,12 @@ import PsiCashClient
     @objc func application(_ app: UIApplication,
                            open url: URL,
                            options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
-    
-    // -
+
+    @objc func presentPsiCashViewController(_ initialTab: PsiCashScreenTab)
     
     @objc func loadingScreenDismissSignal(_ completionHandler: @escaping () -> Void)
     
     @objc func makeSubscriptionBarView() -> SubscriptionBarView
-    
-    @objc func makePsiCashViewController(
-        _ initialTab: PsiCashViewController.PsiCashViewControllerTabs
-    ) -> UIViewController
     
     /// Returns `nil` if there are no onboarding stages to complete.
     @objc func makeOnboardingViewControllerWithStagesNotCompleted(
@@ -126,6 +124,9 @@ import PsiCashClient
     @objc func reinstallVPNConfig()
     @objc func installVPNConfigWithPromise()
         -> Promise<VPNConfigInstallResultWrapper>.ObjCPromise<VPNConfigInstallResultWrapper>
+    
+    // PsiCash accounts
+    @objc func logOutPsiCashAccount()
     
     // User defaults
     
@@ -320,9 +321,9 @@ import PsiCashClient
 
 /// Wraps `BalanceState` struct.
 @objc final class BridgedBalanceViewBindingType: NSObject {
-    let state: PsiCashBalanceView.BindingType
+    let state: PsiCashBalanceViewWrapper.BindingType
 
-    init(swiftState state: PsiCashBalanceView.BindingType) {
+    init(swiftState state: PsiCashBalanceViewWrapper.BindingType) {
         self.state = state
     }
 }
